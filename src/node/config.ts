@@ -353,11 +353,11 @@ const debug = require('debug')('vite:config')
 
 export async function resolveConfig(
   mode: string,
-  configPath?: string
+  configPath?: string,
+  config?: ResolvedConfig | undefined
 ): Promise<ResolvedConfig | undefined> {
   const start = Date.now()
-  const cwd = process.cwd()
-  let config: ResolvedConfig | undefined
+  const cwd = process.cwd()  
   let resolvedPath: string | undefined
   let isTS = false
   if (configPath) {
@@ -375,7 +375,7 @@ export async function resolveConfig(
     }
   }
 
-  if (!resolvedPath) {
+  if (!resolvedPath && !config) {
     // load environment variables
     return {
       env: loadEnv(mode, cwd)
@@ -383,7 +383,7 @@ export async function resolveConfig(
   }
 
   try {
-    if (!isTS) {
+    if (!isTS && !config) {
       try {
         config = require(resolvedPath)
       } catch (e) {
